@@ -1,5 +1,7 @@
 import socket
 import os # For clearing the console as I'm running the file from a powershell window.
+from fdp import ForzaDataPacket
+import math
 
 def main():
     # Define UDP server address and port to listen on
@@ -12,16 +14,32 @@ def main():
     # Bind the socket to the specified address and port
     sock.bind((UDP_IP, UDP_PORT))
 
-    print("Listening, waiting for data.")
+    os.system('cls') # Clear the console.
 
     try:
         while True:
             # Receive data from the socket
             data, addr = sock.recvfrom(1024)  # Buffer size is 1024 bytes
 
-            # Display the received data
-            os.system('cls') # Clear the console.
-            print(f"Data: {data}") # Just print the raw data, not useful and need to parse it.
+            # Create a ForzaDataPacket object from the received data
+            fdpacket = ForzaDataPacket(data)
+
+            # Return the cursor to the top-left of the console.
+            print("\033[H", end="")
+
+            # Format the RPM as a 5-character string, right-justified
+            rpm_int = int(round(fdpacket.current_engine_rpm))
+            rpm_string = str(rpm_int).rjust(5)
+
+            # Format the speed as a 5-character string, right-justified
+            speed_int = int(round(fdpacket.speed*3.6))
+            speed_string = str(speed_int).rjust(5)
+
+            # Print the desired attributes.
+            print(rpm_string + " RPM" + '\n' 
+                  + speed_string + " Km/h" + '\n' 
+                  + "Gear " + str(fdpacket.gear).rjust(2) + '\n' 
+                  + "Lap" + str(fdpacket.lap_no).rjust(4))
 
     except KeyboardInterrupt:
         print("\nUDP server stopped.")
