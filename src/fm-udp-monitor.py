@@ -1,7 +1,8 @@
+# A console app to act as a HUD for some race data that I am trying to use in Forza Motorsport 2023.
+
 import socket
 import os # For clearing the console as I'm running the file from a powershell window.
 from fdp import ForzaDataPacket
-import math
 
 def main():
     # Define UDP server address and port to listen on
@@ -42,7 +43,7 @@ def main():
                   + "Lap" + str(fdpacket.lap_no).rjust(4))
 
     except KeyboardInterrupt:
-        print("\nUDP server stopped.")
+        print("\nStopped.")
 
     finally:
         # Close the socket when done
